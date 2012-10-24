@@ -800,7 +800,7 @@ static NSOperationQueue *sharedQueue = nil;
 	if (![self isCancelled] && ![self complete]) {
 		[self main];
 		while (!complete) {
-			[[NSRunLoop currentRunLoop] runMode:[self runLoopMode] beforeDate:[NSDate distantFuture]];
+			[[NSRunLoop currentRunLoop] runMode:[self runLoopMode] beforeDate:[NSDate dateWithTimeIntervalSinceNow:4]];
 		}
 	}
 
