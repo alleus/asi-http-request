@@ -800,7 +800,17 @@ static NSOperationQueue *sharedQueue = nil;
 	if (![self isCancelled] && ![self complete]) {
 		[self main];
 		while (!complete) {
-			[[NSRunLoop currentRunLoop] runMode:[self runLoopMode] beforeDate:[NSDate dateWithTimeIntervalSinceNow:4]];
+			BOOL usingReadStream = NO;
+			
+			if ([self shouldStreamPostDataFromDisk] && [self postBodyFilePath])
+				if ([[self postBodyReadStream] streamStatus] == NSStreamStatusReading)
+					usingReadStream = YES;
+			
+			if (usingReadStream) {
+				[[NSRunLoop currentRunLoop] runMode:[self runLoopMode] beforeDate:[NSDate distantFuture]];
+			} else {
+				[[NSRunLoop currentRunLoop] runMode:[self runLoopMode] beforeDate:[NSDate dateWithTimeIntervalSinceNow:4]];
+			}
 		}
 	}
 
